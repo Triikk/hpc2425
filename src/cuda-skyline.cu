@@ -102,21 +102,7 @@ void free_points(points_t *points) {
 }
 
 // /* Returns 1 iff |p| dominates |q| */
-// int dominates(const float *p, const float *q, int D) {
-//     for (int k = 0; k < D; k++) {
-//         if (p[k] < q[k]) {
-//             return 0;
-//         }
-//     }
-//     for (int k = 0; k < D; k++) {
-//         if (p[k] > q[k]) {
-//             return 1;
-//         }
-//     }
-//     return 0;
-// }
-
-__device__ int dominates(const float *p, const float *q, int D) {
+__device__ __host__ int dominates(const float *p, const float *q, int D) {
     for (int k = 0; k < D; k++) {
         if (p[k] < q[k]) {
             return 0;
@@ -166,8 +152,6 @@ int skyline(const points_t *points, int *s) {
 
     dim3 block(BLKDIM, BLKDIM);
     dim3 grid((N + BLKDIM - 1) / BLKDIM, (N + BLKDIM - 1) / BLKDIM);
-    // printf("block: %dx%d, grid:%dx%dx%d\n", block.x, block.y, grid.x, grid.y, grid.z);
-    // fflush(stdout);
     double tstart = hpc_gettime();
     skyline<<<grid, block>>>(d_P, d_s, D, N);
     cudaCheckError();
